@@ -9,4 +9,6 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='accounts/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='accounts/logout.html'), name='logout'),
     path('profile/', views.profile_view, name='profile'),
+    path('pipelines/', views.pipelines_view, name='pipelines'),
+    path('graph-view/', views.graph_view, name='graph_view'),
 ]

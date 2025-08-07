@@ -95,6 +95,7 @@ USE_TZ = True
 # Static files (CSS, JS, images)
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']  # Optional for global static folder
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # For collectstatic command
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -103,6 +104,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Authentication redirects
 LOGIN_REDIRECT_URL = '/accounts/profile/'  # 👈 Go here after login
 LOGOUT_REDIRECT_URL = '/accounts/login/'   # 👈 Go here after logout
-
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']

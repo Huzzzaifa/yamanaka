@@ -12,7 +12,7 @@ def signup_view(request):
             user = form.save()  # Save the new user to the database
             login(request, user)  # Log in the user immediately after account creation
             messages.success(request, 'Account created successfully! Welcome to your profile.')
-            return redirect('accounts:profile')  # Redirect to the user’s profile page
+            return redirect('accounts:profile')  # Redirect to the user's profile page
         else:
             messages.error(request, 'Please fix the errors below.')  # Show error message for invalid form
     else:
@@ -28,3 +28,21 @@ def profile_view(request):
     """
     user = request.user  # Get the currently logged-in user
     return render(request, 'accounts/profile.html', {'user': user})
+
+
+@login_required
+def pipelines_view(request):
+    """
+    Displays the pipelines page for creating pipelines using data imported from Google Sheets.
+    """
+    user = request.user  # Get the currently logged-in user
+    return render(request, 'accounts/pipelines.html', {'user': user})
+
+
+@login_required
+def graph_view(request):
+    """
+    Displays the graph view page for visualizing data and analytics.
+    """
+    user = request.user  # Get the currently logged-in user
+    return render(request, 'accounts/graph_view.html', {'user': user})

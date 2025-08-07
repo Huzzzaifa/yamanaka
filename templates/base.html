@@ -11,6 +11,8 @@
         <nav>
             {% if user.is_authenticated %}
                 <a href="{% url 'accounts:profile' %}">Profile</a> |
+                <a href="{% url 'accounts:pipelines' %}">Pipelines</a> |
+                <a href="{% url 'accounts:graph_view' %}">Graph View</a> |
                 <form action="{% url 'accounts:logout' %}" method="post" style="display:inline;">
                     {% csrf_token %}
                     <button type="submit">Logout</button>
@@ -19,6 +21,7 @@
                 <a href="{% url 'accounts:login' %}">Login</a> |
                 <a href="{% url 'accounts:signup' %}">Sign Up</a>
             {% endif %}
+
         </nav>
     </header>
 

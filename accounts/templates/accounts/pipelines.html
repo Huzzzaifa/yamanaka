@@ -3,16 +3,114 @@
 {% block content %}
 <div class="pipelines-container">
     <h1>Create Pipelines</h1>
-    <p>This page will allow you to create pipelines using data imported from Google Sheets.</p>
-    
-    <div class="pipelines-content">
-        <h2>Pipelines will go here</h2>
-        <p>The Google Sheet integration is not available yet. Once the Google Sheet is ready, this page will provide functionality to:</p>
-        <ul>
-            <li>Import data from Google Sheets</li>
-            <li>Create and configure pipelines</li>
-            <li>Process the imported data</li>
-        </ul>
-    </div>
+    <p>This page visualizes the configured Google Sheet.</p>
+    <p>The pipeline table below is auto-generated and updates on sheet changes.</p>
+
+    <style>
+        /* Make this page full-width and readable */
+        .container { max-width: 1280px; padding: 16px; }
+        .pipeline-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        .pipeline-table th, .pipeline-table td { padding: 10px 8px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+        .pipeline-table th { text-transform: lowercase; letter-spacing: 0.02em; color: #666; }
+        .pipeline-col-programme { width: 26%; }
+        .pipeline-col-company { width: 18%; }
+        .pipeline-col-platform { width: 20%; }
+        .pipeline-col-indication { width: 18%; }
+        .pipeline-col-stage { width: 8%; }
+        .pipeline-col-timeline { width: auto; }
+
+        .timeline { position: relative; height: 28px; background: #fafafa; border: 1px solid #ececec; border-radius: 14px; }
+        /* Subtle axis ticks at 0,25,50,75,100 */
+        .timeline .tick { position: absolute; top: 0; bottom: 0; width: 1px; background: #e0e0e0; }
+        .timeline .tick-label { position: absolute; top: 30px; font-size: 11px; color: #999; transform: translateX(-50%); }
+        .timeline .marker { transition: transform 120ms ease; }
+        .timeline .marker:hover { transform: scale(1.15); }
+
+        /* Responsive tweak */
+        @media (max-width: 1100px) {
+          .pipeline-col-platform { display: none; }
+          .pipeline-col-company { width: 22%; }
+          .pipeline-col-indication { width: 22%; }
+        }
+    </style>
+
+    {% if event_types_list %}
+        <div style="display:flex; align-items:center; gap:12px; margin: 12px 0;">
+            <div style="font-weight:600;">Event Types</div>
+            <div id="chips" style="display:flex; flex-wrap:wrap; gap:8px;">
+                {% for item in event_types_list %}
+                    <button class="chip" data-type="{{ item.name }}" style="border:1px solid #ddd; border-radius:16px; padding:4px 10px; background:#fff; cursor:pointer;">
+                        <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background: {{ item.color }}; margin-right:6px; vertical-align:middle;"></span>
+                        {{ item.name }}
+                    </button>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if error %}
+        <div class="message error">{{ error }}</div>
+    {% endif %}
+
+    {% if pipeline_rows %}
+        <div style="overflow:auto;">
+            <table class="pipeline-table">
+                <thead>
+                    <tr>
+                        <th class="pipeline-col-programme" style="text-align:left;">programme</th>
+                        <th class="pipeline-col-company" style="text-align:left;">company</th>
+                        <th class="pipeline-col-platform" style="text-align:left;">platform</th>
+                        <th class="pipeline-col-indication" style="text-align:left;">indication</th>
+                        <th class="pipeline-col-stage" style="text-align:left;">stage</th>
+                        <th class="pipeline-col-timeline" style="text-align:left;">timeline</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in pipeline_rows %}
+                        <tr>
+                            <td class="pipeline-col-programme">{{ row.programme }}</td>
+                            <td class="pipeline-col-company">{{ row.company }}</td>
+                            <td class="pipeline-col-platform">{{ row.platform }}</td>
+                            <td class="pipeline-col-indication">{{ row.indication }}</td>
+                            <td class="pipeline-col-stage">{{ row.stage }}</td>
+                            <td class="pipeline-col-timeline">
+                                <div class="timeline">
+                                    <div class="tick" style="left:0%"></div>
+                                    <div class="tick" style="left:25%"></div>
+                                    <div class="tick" style="left:50%"></div>
+                                    <div class="tick" style="left:75%"></div>
+                                    <div class="tick" style="left:100%"></div>
+                                    {% for m in row.markers %}
+                                        <div class="marker" data-type="{{ m.type }}" title="{{ m.label }}" style="position:absolute; top:6px; left: calc({{ m.pos }}% - 6px); width:12px; height:12px; background: {{ m.color|default:'#666' }}; border:2px solid white; border-radius:50%; box-shadow:0 0 0 1px #e5e5e5;"></div>
+                                    {% endfor %}
+                                    <div class="tick-label" style="left:0%">0</div>
+                                    <div class="tick-label" style="left:25%">25</div>
+                                    <div class="tick-label" style="left:50%">50</div>
+                                    <div class="tick-label" style="left:75%">75</div>
+                                    <div class="tick-label" style="left:100%">100</div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+
+    <script>
+        // simple client-side filtering by event type
+        const active = new Set();
+        document.querySelectorAll('.chip').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const t = btn.getAttribute('data-type');
+                if (active.has(t)) { active.delete(t); btn.style.opacity = 1; }
+                else { active.add(t); btn.style.opacity = 0.5; }
+                document.querySelectorAll('.timeline .marker').forEach(m => {
+                    const mt = m.getAttribute('data-type');
+                    m.style.display = (active.size === 0 || active.has(mt)) ? 'block' : 'none';
+                });
+            });
+        });
+    </script>
 </div>
 {% endblock %} 

@@ -104,3 +104,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Authentication redirects
 LOGIN_REDIRECT_URL = '/accounts/profile/'  # 👈 Go here after login
 LOGOUT_REDIRECT_URL = '/accounts/login/'   # 👈 Go here after logout
+
+# Defaults for Google Sheets integration (can be overridden by environment vars)
+DEFAULT_SHEET_ID = '1fl-PPHnWMJRuA7Cs-Rl0KvLmvJq02C9KvwoxQYEP-Vc'
+DEFAULT_SHEET_GID = '0'  # first tab
+DEFAULT_SHEET_NAME = ''   # optional if gid provided
